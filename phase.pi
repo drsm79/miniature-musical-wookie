@@ -2,18 +2,18 @@
 define :play_patterns do |series1, series2, t|
   zzz = 0
   if series1 == series2
-    in_thread(name: :one) do
+    in_thread do
       play_pattern_timed series1, [t]
     end
   else
-    in_thread(name: :one) do
+    in_thread do
       play_pattern_timed series1, [t]
       if one_in(3)
         zzz = rrand 0, 0.25
         sleep zzz
       end
     end
-    in_thread(name: :two) do
+    in_thread do
       play_pattern_timed series2, [t]
     end
   end
