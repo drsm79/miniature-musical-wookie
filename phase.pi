@@ -1,0 +1,62 @@
+# Welcome to Sonic Pi v2.3
+define :play_patterns do |series1, series2, t|
+  zzz = 0
+  if series1 == series2
+    in_thread(name: :one) do
+      play_pattern_timed series1, [t]
+    end
+  else
+    in_thread(name: :one) do
+      use_synth :beep
+      play_pattern_timed series1, [t]
+      if one_in(3)
+        zzz = rrand 0, 0.25
+        sleep zzz
+        puts "zzz"
+        puts zzz
+      end
+    end
+    in_thread(name: :two) do
+      play_pattern_timed series2, [t]
+    end
+  end
+  sleep zzz + series1.length * t
+end
+
+define :phase do |series1, series2, t|
+  puts t
+  play_patterns series1, series2, t
+  series2 = shift series2
+  return series1, series2
+end
+
+define :shift do |l|
+  l2 = l.reverse
+  n = l2.pop
+  l = l2.reverse.push(n)
+  return l
+end
+
+l1 = [
+  :E3, :G3, :B3, :A3,
+  :C4, :E3, :B3, :G3,
+  :Fs3, :A3, :C4, :G3,
+  :D4, :E4, :B3, :G3
+]
+l2 = l1
+
+l3 = [
+  :C4, :E3, :B3, :G4,
+  :E4, :G4, :B4, :A4,
+  :Fs4, :A4, :C4, :G4,
+  :D4, :E4, :B4, :G4
+]
+l4 = l3
+loop do
+  with_fx :echo, mix: 0.25, decay: 5, phase: 0.35 do
+    with_fx :reverb, mix: 0.5 do
+      l1, l2 = phase l1, l2, 0.4
+      l3, l4 = phase l3, l4, 0.2
+    end
+  end
+end
