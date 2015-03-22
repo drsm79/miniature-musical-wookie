@@ -1,0 +1,18 @@
+use_synth :dsaw
+use_synth_defaults attack: 0.75, decay: 0.5, release: 0.25, cutoff:70, sustain_level: 0.4, sustain: 1
+i = 0
+loop do
+  use_random_seed i
+  s = play_chord [ 
+    chord(:e3, :minor), 
+    chord(:b3, :minor), 
+    chord(:g3, :major),
+    chord(:c3, :major),
+    chord(:a3, :minor7),
+    chord(:d3, :major)
+  ].ring[i]
+  control s, cutoff: 70 + rrand_i(-10, 10)
+  control s, detuen: rrand_i(0.1, 0.3)
+  i += 1
+  sleep 2
+end
