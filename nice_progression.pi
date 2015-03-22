@@ -1,8 +1,7 @@
-use_synth :dsaw
+
 use_synth_defaults attack: 0.75, decay: 0.5, release: 0.25, cutoff:70, sustain_level: 0.4, sustain: 1
-i = 0
-loop do
-  use_random_seed i
+define :play_with do |synth, i, cutoff, amp|
+  use_synth synth
   s = play_chord [ 
     chord(:e3, :minor), 
     chord(:b3, :minor), 
@@ -10,9 +9,22 @@ loop do
     chord(:c3, :major),
     chord(:a3, :minor7),
     chord(:d3, :major)
-  ].ring[i]
-  control s, cutoff: 70 + rrand_i(-10, 10)
+  ].ring[i], amp: amp
+  control s, cutoff: cutoff + rrand_i(-10, 10)
   control s, detune: rrand(0.01, 0.2)
+  control s, pulse_width: [0, 0.2, 0.4, 0.6, 0.8, 1].ring[i]
+end
+i = 0
+loop do
+  use_random_seed i
+  with_fx :reverb do
+    play_with :dsaw, i, 70, 0.7
+    with_transpose 12 do
+      with_fx :ixi_techno do
+        play_with :square, i, 90, 0.3
+      end
+    end
+  end
   i += 1
   sleep 2
 end
