@@ -12,7 +12,7 @@ loop do
     chord(:d3, :major)
   ].ring[i]
   control s, cutoff: 70 + rrand_i(-10, 10)
-  control s, detuen: rrand_i(0.1, 0.3)
+  control s, detune: rrand(0.01, 0.2)
   i += 1
   sleep 2
 end
